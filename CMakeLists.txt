@@ -20,6 +20,8 @@ add_library(PlugUI STATIC
     src/PlugSignature.cpp
     src/PlugScope.cpp
     src/PlugVuMeter.cpp
+    src/PlugGrMeter.cpp
+    src/PlugLedMeter.cpp
     src/PlugCorrelationMeter.cpp
 )
 

@@ -190,7 +190,7 @@ void PlugLookAndFeel::drawRotarySlider(juce::Graphics &g, int x, int y,
     juce::Path valueArc;
     valueArc.addCentredArc(centre.x, centre.y, arcR, arcR, 0.0f,
                            rotaryStartAngle, angle, true);
-    g.setColour(accent.withAlpha(enabled ? 0.72f : 0.25f));
+    g.setColour(accent.withAlpha(enabled ? 0.88f : 0.25f));
     g.strokePath(valueArc,
                  juce::PathStrokeType(thickness, juce::PathStrokeType::mitered,
                                       juce::PathStrokeType::rounded));
