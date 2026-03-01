@@ -22,7 +22,7 @@ add_library(PlugUI STATIC
     src/PlugCorrelationMeter.cpp
 )
 
-if(DEFINED juce_add_binary_data)
+if(COMMAND juce_add_binary_data)
     juce_add_binary_data(PlugUIAssets
         NAMESPACE PlugUIBinaryData
         SOURCES assets/metal_bg.png
@@ -39,7 +39,7 @@ target_include_directories(PlugUI PUBLIC
 # ── JUCE link — only GUI modules needed ────────────────────────────────────────
 # When consumed via add_subdirectory inside a JUCE project, the juce:: targets
 # are already defined by the parent build.
-if(DEFINED juce_add_binary_data)
+if(COMMAND juce_add_binary_data)
     target_link_libraries(PlugUI PUBLIC
         juce::juce_gui_basics
         juce::juce_graphics
