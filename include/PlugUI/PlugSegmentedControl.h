@@ -10,22 +10,23 @@ namespace PlugUI {
     Accepts any number of labels via constructor.
     Selected index is 1-based to match JUCE ComboBox IDs. */
 class PlugSegmentedControl : public juce::Component {
-  public:
-    /** Construct with the segment labels. */
-    explicit PlugSegmentedControl(const std::vector<std::string>& labels);
+public:
+  /** Construct with the segment labels. */
+  explicit PlugSegmentedControl(const std::vector<std::string> &labels);
 
-    void setSelectedId(int selectedId,
-                       juce::NotificationType notification = juce::dontSendNotification);
-    int getSelectedId() const noexcept;
-    void resized() override;
+  void setSelectedId(int selectedId, juce::NotificationType notification =
+                                         juce::dontSendNotification);
+  int getSelectedId() const noexcept;
+  void resized() override;
 
-    /** Called when the user clicks a segment. Argument is 1-based. */
-    std::function<void(int)> onSelectionChanged;
+  /** Called when the user clicks a segment. Argument is 1-based. */
+  std::function<void(int)> onSelectionChanged;
 
-  private:
-    void handleSegmentClick(int selectedId);
-    std::vector<std::unique_ptr<juce::ToggleButton>> m_buttons;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlugSegmentedControl)
+private:
+  void handleSegmentClick(int selectedId);
+  std::vector<std::unique_ptr<juce::ToggleButton>> m_buttons;
+  int m_selectedId{1};
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlugSegmentedControl)
 };
 
 } // namespace PlugUI
