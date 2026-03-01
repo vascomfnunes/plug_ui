@@ -10,6 +10,8 @@ A reusable JUCE-based UI framework for audio plugins. Drop it into any JUCE proj
 | `PlugLookAndFeel` | Custom JUCE LookAndFeel with knobs, faders, buttons, labels, combo boxes |
 | `PlugKnob` | Labelled rotary knob (label above, uppercase) |
 | `PlugMeter` | Horizontal gain-reduction meter with dB scale |
+| `PlugGrMeter` | Analog-style needle compressor gain-reduction meter |
+| `PlugLedMeter` | Vertical 10-segment LED column meter (-30 to 0 dBFS) |
 | `PlugVuMeter` | Analog-style needle VU meter with lit/unlit states |
 | `PlugCorrelationMeter` | Stereo phase correlation bar (−1 to +1) |
 | `PlugScope` | Scrolling pre/post amplitude scope with clip indication |
@@ -82,9 +84,17 @@ PlugUI::BackgroundRenderer::paintEnginePanel(g, panelBounds);
 ## Meters
 
 ```cpp
-// Gain reduction meter
+// Gain reduction meter (horizontal bar)
 PlugUI::PlugMeter grMeter;
 grMeter.setGainReductionDb(6.5f); // positive value = dB of reduction
+
+// Analog-style gain reduction meter (needle)
+PlugUI::PlugGrMeter grNeedleMeter;
+grNeedleMeter.setGainReductionDb(3.0f); // deflects left
+
+// Vertical LED level meter
+PlugUI::PlugLedMeter ledMeter;
+ledMeter.setLevelDb(-6.0f); // -30 dBFS to 0 dBFS
 
 // VU meter
 PlugUI::PlugVuMeter vuMeter;

@@ -23,6 +23,29 @@ juce::Font PlugLookAndFeel::getSliderPopupFont(juce::Slider &) {
   return f;
 }
 
+int PlugLookAndFeel::getSliderPopupPlacement(juce::Slider &) {
+  // Allow all directions; JUCE picks whichever fits — no directional preference
+  // forces the bubble to stay tight against the knob in any orientation.
+  return juce::BubbleComponent::above | juce::BubbleComponent::below
+       | juce::BubbleComponent::left  | juce::BubbleComponent::right;
+}
+
+void PlugLookAndFeel::drawBubble(juce::Graphics &g, juce::BubbleComponent &,
+                                  const juce::Point<float> &tip,
+                                  const juce::Rectangle<float> &body) {
+  // Near-black, slightly warm, semi-transparent — matches the dark glass
+  // aesthetic of the meter and knob faces.
+  juce::Path p;
+  p.addBubble(body.reduced(0.5f),
+              body.getUnion(juce::Rectangle<float>(tip.x, tip.y, 1.0f, 1.0f)),
+              tip, 4.0f, 5.5f);
+
+  g.setColour(juce::Colour(0xFF080A0C).withAlpha(0.91f));
+  g.fillPath(p);
+  g.setColour(juce::Colour(0xFF2E2C28).withAlpha(0.65f));
+  g.strokePath(p, juce::PathStrokeType(0.8f));
+}
+
 juce::Font PlugLookAndFeel::getLabelFont(juce::Label &label) {
   const auto &f = label.getFont();
   if (f.getHeight() > 1.0f)
@@ -53,10 +76,10 @@ void PlugLookAndFeel::drawRotarySlider(juce::Graphics &g, int x, int y,
       static_cast<float>(x), static_cast<float>(y), static_cast<float>(width),
       static_cast<float>(height));
 
-  // Reserve outer area for the shadow — knob occupies ~76% of the space
+  // The knob fills 100% of the bounds so tooltips are tight against it.
   const float available =
       juce::jmin(fullBounds.getWidth(), fullBounds.getHeight());
-  const float radius = available * 0.38f; // knob radius
+  const float radius = available * 0.50f; // knob radius
   if (radius <= 0.0f)
     return;
 
@@ -72,7 +95,7 @@ void PlugLookAndFeel::drawRotarySlider(juce::Graphics &g, int x, int y,
 
   // ── Soft drop shadow (radial gradient, fades well before edge) ───────────
   {
-    const float shadowR = available * 0.47f;
+    const float shadowR = available * 0.618f;
     auto shadowBounds =
         fullBounds.withSizeKeepingCentre(shadowR * 2.0f, shadowR * 2.0f)
             .translated(0.0f, radius * 0.11f);
@@ -89,15 +112,12 @@ void PlugLookAndFeel::drawRotarySlider(juce::Graphics &g, int x, int y,
 
   // ── Wide dark rim / shelf / bezel ────────────────────────────────────────
   {
-    // Very subtle top-to-bottom gradient — dark charcoal, slightly lighter on
-    // top
     juce::ColourGradient rimGrad(knobRimLight.brighter(0.08f), centre.x,
                                  knobBounds.getY(), knobRimDark.darker(0.10f),
                                  centre.x, knobBounds.getBottom(), false);
     g.setGradientFill(rimGrad);
     g.fillEllipse(knobBounds);
 
-    // Faint top-edge highlight
     {
       juce::Path topArc;
       topArc.addCentredArc(centre.x, centre.y, radius - 0.5f, radius - 0.5f,
@@ -107,7 +127,6 @@ void PlugLookAndFeel::drawRotarySlider(juce::Graphics &g, int x, int y,
       g.strokePath(topArc, juce::PathStrokeType(0.7f));
     }
 
-    // Rim catch-light and lower ring shade for a more machined bezel feel.
     g.setColour(juce::Colours::white.withAlpha(0.06f));
     g.drawEllipse(knobBounds.reduced(0.7f), 0.8f);
     g.setColour(juce::Colours::black.withAlpha(0.22f));
@@ -123,12 +142,10 @@ void PlugLookAndFeel::drawRotarySlider(juce::Graphics &g, int x, int y,
     g.drawEllipse(bodyBounds.expanded(0.8f), 0.7f);
   }
 
-  // ── Directional shadow on bezel (bottom-right, body casts onto shelf) ────
+  // ── Directional shadow on bezel (bottom-right) ────────────────────────────
   {
     const float bodyR = bodyBounds.getWidth() * 0.5f;
     const float shadowOff = rimWidth * 0.45f;
-    // Radial gradient centred on body offset toward bottom-right,
-    // darkening the bezel in that quadrant
     juce::ColourGradient dirShadow(
         juce::Colours::transparentBlack, centre.x + shadowOff * 0.3f,
         centre.y + shadowOff * 0.3f, juce::Colours::black.withAlpha(0.34f),
@@ -140,60 +157,38 @@ void PlugLookAndFeel::drawRotarySlider(juce::Graphics &g, int x, int y,
     g.fillEllipse(knobBounds);
   }
 
-  // ── Knob body (raised face) ──────────────────────────────────────────────
+  // ── Knob body ────────────────────────────────────────────────────────────
   {
-    // Radial gradient: subtle top-light — slightly lighter from upper centre,
-    // darker edges
+    const float bodyR = bodyBounds.getWidth() * 0.5f;
     juce::ColourGradient bodyGrad(
-        knobFillCentre.brighter(0.06f), centre.x, centre.y - radius * 0.30f,
-        knobFill.darker(0.08f), centre.x, centre.y + radius * 0.74f, true);
+        knobFillCentre.brighter(0.12f),
+        centre.x, bodyBounds.getY(),
+        knobFill.darker(0.30f),
+        centre.x, bodyBounds.getBottom(), false);
+    bodyGrad.addColour(0.55, knobFill);
     g.setGradientFill(bodyGrad);
     g.fillEllipse(bodyBounds);
-  }
 
-  // ── Subtle top-light sheen ───────────────────────────────────────────────
-  {
-    const float bodyR = bodyBounds.getWidth() * 0.5f;
-    juce::ColourGradient sheen(juce::Colours::white.withAlpha(0.08f), centre.x,
-                               bodyBounds.getY() + bodyR * 0.05f,
-                               juce::Colours::transparentWhite, centre.x,
-                               centre.y + bodyR * 0.20f, false);
-    g.setGradientFill(sheen);
+    juce::ColourGradient lowerShadow(
+        juce::Colours::transparentBlack,
+        centre.x, centre.y,
+        juce::Colours::black.withAlpha(0.42f),
+        centre.x, bodyBounds.getBottom(), false);
+    g.setGradientFill(lowerShadow);
     g.fillEllipse(bodyBounds);
 
-    // Small specular spot for a photographic lens-light feel.
-    juce::ColourGradient spot(
-        juce::Colours::white.withAlpha(0.07f), centre.x - bodyR * 0.18f,
-        centre.y - bodyR * 0.24f, juce::Colours::transparentWhite,
-        centre.x + bodyR * 0.20f, centre.y, true);
-    g.setGradientFill(spot);
-    g.fillEllipse(bodyBounds.reduced(bodyR * 0.18f));
-  }
-
-  // ── Bright edge at top of body (rim-light catch) ─────────────────────────
-  {
-    const float bodyR = bodyBounds.getWidth() * 0.5f;
-    juce::Path topEdge;
-    topEdge.addCentredArc(centre.x, centre.y, bodyR - 0.5f, bodyR - 0.5f, 0.0f,
-                          -juce::MathConstants<float>::pi * 0.72f,
-                          juce::MathConstants<float>::pi * 0.72f, true);
-    g.setColour(juce::Colours::white.withAlpha(0.11f));
-    g.strokePath(topEdge, juce::PathStrokeType(0.65f));
-  }
-
-  // ── Gold value arc (just inside body edge) ───────────────────────────────
-  {
-    const float bodyR = bodyBounds.getWidth() * 0.5f;
-    const float arcR = bodyR - juce::jmax(2.0f, bodyR * 0.07f);
-    const float thickness = juce::jmax(1.2f, arcThickness * (radius / 68.0f));
-
-    juce::Path valueArc;
-    valueArc.addCentredArc(centre.x, centre.y, arcR, arcR, 0.0f,
-                           rotaryStartAngle, angle, true);
-    g.setColour(accent.withAlpha(enabled ? 0.88f : 0.25f));
-    g.strokePath(valueArc,
-                 juce::PathStrokeType(thickness, juce::PathStrokeType::mitered,
-                                      juce::PathStrokeType::rounded));
+    juce::Path specular;
+    specular.addCentredArc(centre.x, centre.y, bodyR * 0.62f, bodyR * 0.62f,
+                           0.0f,
+                           -juce::MathConstants<float>::pi * 0.55f,
+                           juce::MathConstants<float>::pi * 0.55f, true);
+    juce::ColourGradient specGrad(
+        juce::Colours::white.withAlpha(0.16f),
+        centre.x, bodyBounds.getY() + bodyR * 0.22f,
+        juce::Colours::transparentWhite,
+        centre.x, bodyBounds.getY() + bodyR * 0.60f, false);
+    g.setGradientFill(specGrad);
+    g.strokePath(specular, juce::PathStrokeType(bodyR * 0.13f));
   }
 
   // ── White pointer / indicator line ───────────────────────────────────────

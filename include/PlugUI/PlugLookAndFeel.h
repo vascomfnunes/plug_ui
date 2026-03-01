@@ -33,6 +33,10 @@ public:
   juce::Font getComboBoxFont(juce::ComboBox &) override;
   void positionComboBoxText(juce::ComboBox &, juce::Label &) override;
   juce::Font getSliderPopupFont(juce::Slider &) override;
+  int getSliderPopupPlacement(juce::Slider &) override;
+  void drawBubble(juce::Graphics &, juce::BubbleComponent &,
+                  const juce::Point<float> &tip,
+                  const juce::Rectangle<float> &body) override;
   juce::Font getLabelFont(juce::Label &) override;
   juce::Label *createSliderTextBox(juce::Slider &) override;
 
