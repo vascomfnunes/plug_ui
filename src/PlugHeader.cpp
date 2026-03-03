@@ -31,15 +31,15 @@ void PlugHeader::paint(juce::Graphics &g) {
                       .withWidth(colW)
                       .translated(0, 2);
 
-  // ── Title (bold, accent gold, centered in left col) ──────────────────────
+  // ── Title (bold, accent gold, left aligned in left col) ───────────────────
   auto titleFont = juce::Font(juce::FontOptions(
       Theme::fontFamily, 82.0f * m_uiScale * 0.44f, juce::Font::bold));
   titleFont.setExtraKerningFactor(0.10f);
 
   g.setFont(titleFont);
   g.setColour(Theme::accent);
-  // Draw centered exactly on the vertical axis of the left column
-  g.drawText(m_title, leftCol, juce::Justification::centred);
+  g.drawText(m_title.toUpperCase(), leftCol.reduced(2, 0),
+             juce::Justification::centredLeft);
 
   // ── Subtitle (centered in right col, muted) ──────────────────────────
   auto subtitleFont = juce::Font(

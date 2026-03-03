@@ -465,13 +465,18 @@ void PlugLookAndFeel::drawButtonText(juce::Graphics &g,
   const auto b = button.getLocalBounds().toFloat();
   auto f = juce::Font(juce::FontOptions(
       fontFamily, juce::jmax(8.0f, b.getHeight() * 0.42f), juce::Font::plain));
+  const auto buttonText = button.getButtonText();
+  if (buttonText == "🎲" || buttonText == "⚄")
+    f = juce::Font(juce::FontOptions("Apple Color Emoji",
+                                     juce::jmax(10.0f, b.getHeight() * 0.62f),
+                                     juce::Font::plain));
   f.setExtraKerningFactor(0.04f);
   g.setFont(f);
   g.setColour(
       button.findColour(juce::TextButton::textColourOffId).isTransparent()
           ? textPrimary
           : button.findColour(juce::TextButton::textColourOffId));
-  g.drawFittedText(button.getButtonText(), button.getLocalBounds(),
+  g.drawFittedText(buttonText, button.getLocalBounds(),
                    juce::Justification::centred, 1);
 }
 
@@ -501,7 +506,10 @@ void PlugLookAndFeel::drawComboBox(juce::Graphics &g, int width, int height,
   const auto bounds =
       juce::Rectangle<float>(0.5f, 0.5f, static_cast<float>(width) - 1.0f,
                              static_cast<float>(height) - 1.0f);
-  g.setColour(panelBg);
+  juce::ColourGradient fill(panelBg.brighter(0.08f), bounds.getCentreX(),
+                            bounds.getY(), panelBg.darker(0.12f),
+                            bounds.getCentreX(), bounds.getBottom(), false);
+  g.setGradientFill(fill);
   g.fillRoundedRectangle(bounds, 2.0f);
   g.setColour(borderSubtle.withAlpha(0.55f));
   g.drawRoundedRectangle(bounds, 2.0f, 0.8f);
@@ -527,11 +535,11 @@ void PlugLookAndFeel::positionComboBoxText(juce::ComboBox &box,
                                            juce::Label &label) {
   constexpr int leftPadding = 8;
   constexpr int rightPadding = 24;
-  constexpr int verticalPadding = 2;
+  constexpr int verticalPadding = 1;
   label.setBounds(leftPadding, verticalPadding,
                   juce::jmax(0, box.getWidth() - leftPadding - rightPadding),
                   juce::jmax(0, box.getHeight() - (verticalPadding * 2)));
-  label.setJustificationType(juce::Justification::centred);
+  label.setJustificationType(juce::Justification::centredLeft);
   label.setFont(getComboBoxFont(box));
 }
 
