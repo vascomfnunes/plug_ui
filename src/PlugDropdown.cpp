@@ -36,9 +36,16 @@ int PlugDropdown::getSelectedId() const { return comboBox_.getSelectedId(); }
 
 void PlugDropdown::resized() {
   auto area = getLocalBounds();
-  constexpr int labelWidth = 70;
-  const int lw = juce::jmin(labelWidth, area.getWidth() / 3);
-  label_.setBounds(area.removeFromLeft(lw));
+  const bool hasLabel = label_.getText().isNotEmpty();
+  if (hasLabel) {
+    const int labelHeight = juce::jmax(12, juce::jmin(16, area.getHeight() / 3));
+    label_.setBounds(area.removeFromTop(labelHeight));
+    area.removeFromTop(2);
+    label_.setVisible(true);
+  } else {
+    label_.setVisible(false);
+  }
+
   comboBox_.setBounds(area);
 }
 

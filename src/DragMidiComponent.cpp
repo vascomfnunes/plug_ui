@@ -29,16 +29,18 @@ void DragMidiComponent::paint(juce::Graphics &g) {
   auto bounds = getLocalBounds().toFloat().reduced(0.5f);
   const bool available = canDrag();
 
-  const auto base = available ? Theme::buttonOn : Theme::buttonOff;
+  const auto base = available ? Theme::buttonOff.brighter(0.06f)
+                              : Theme::buttonOff.darker(0.08f);
   juce::ColourGradient grad(base.brighter(0.12f), bounds.getCentreX(), bounds.getY(),
                             base.darker(0.15f), bounds.getCentreX(), bounds.getBottom(), false);
   g.setGradientFill(grad);
-  g.fillRoundedRectangle(bounds, 4.0f);
+  g.fillRoundedRectangle(bounds, 2.0f);
 
-  g.setColour(Theme::borderSubtle.withAlpha(0.9f));
-  g.drawRoundedRectangle(bounds, 4.0f, 1.0f);
+  g.setColour(Theme::borderSubtle.withAlpha(0.8f));
+  g.drawRoundedRectangle(bounds, 2.0f, 0.9f);
 
-  g.setColour(available ? Theme::buttonOnText : Theme::buttonOffText);
+  g.setColour(available ? Theme::textMuted.brighter(0.25f)
+                        : Theme::textMuted.withAlpha(0.6f));
   auto font = juce::Font(
       juce::FontOptions(Theme::fontFamily, Theme::fontSection + 0.5f, juce::Font::bold));
   font.setExtraKerningFactor(0.06f);

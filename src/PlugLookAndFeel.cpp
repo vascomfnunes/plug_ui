@@ -222,11 +222,17 @@ void PlugLookAndFeel::drawLinearSlider(juce::Graphics &g, int x, int y,
                                        int width, int height, float sliderPos,
                                        float, float, juce::Slider::SliderStyle,
                                        juce::Slider &) {
-  const float trackThick = 3.0f;
-  const float thumbR = 4.5f;
+  const float trackThick = 4.5f;
+  const float thumbR = 6.0f;
   const float midY = static_cast<float>(y) + static_cast<float>(height) * 0.5f;
   const float left = static_cast<float>(x) + thumbR;
   const float right = static_cast<float>(x + width) - thumbR;
+
+  g.setColour(textMuted.withAlpha(0.4f));
+  for (const float tickNorm : {0.0f, 0.5f, 1.0f}) {
+    const float tickX = left + (right - left) * tickNorm;
+    g.drawLine(tickX, midY - 5.0f, tickX, midY + 5.0f, 0.8f);
+  }
 
   g.setColour(borderSubtle.withAlpha(0.85f));
   g.fillRoundedRectangle(left, midY - trackThick * 0.5f,
