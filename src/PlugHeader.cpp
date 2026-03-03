@@ -47,7 +47,7 @@ void PlugHeader::paint(juce::Graphics &g) {
   subtitleFont.setExtraKerningFactor(0.06f);
   g.setFont(subtitleFont);
   g.setColour(textMuted.withAlpha(0.95f));
-  g.drawText(m_subtitle, rightCol, juce::Justification::centred);
+  g.drawText(m_subtitle, rightCol.reduced(2, 0), juce::Justification::centredRight);
 }
 
 } // namespace PlugUI

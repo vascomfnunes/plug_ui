@@ -21,6 +21,10 @@ PlugIntegerSelector::PlugIntegerSelector() {
 
   minusButton_.onClick = [this] { changeBy(-step_); };
   plusButton_.onClick = [this] { changeBy(step_); };
+  minusButton_.setColour(juce::TextButton::buttonColourId, Theme::panelBg);
+  minusButton_.setColour(juce::TextButton::textColourOffId, Theme::textPrimary.withAlpha(0.92f));
+  plusButton_.setColour(juce::TextButton::buttonColourId, Theme::panelBg);
+  plusButton_.setColour(juce::TextButton::textColourOffId, Theme::textPrimary.withAlpha(0.92f));
 
   addAndMakeVisible(label_);
   addAndMakeVisible(minusButton_);
@@ -72,10 +76,13 @@ void PlugIntegerSelector::resized() {
   }
 
   const int h = area.getHeight();
-  const int buttonW = juce::jmin(h + 8, area.getWidth() / 4);
-  minusButton_.setBounds(area.removeFromLeft(buttonW));
-  plusButton_.setBounds(area.removeFromRight(buttonW));
-  valueLabel_.setBounds(area.reduced(2, 0));
+  const int buttonW = juce::jmin(h, area.getWidth() / 3);
+  auto row = area;
+  const auto minusBounds = row.removeFromLeft(buttonW).withSizeKeepingCentre(buttonW, h);
+  const auto plusBounds = row.removeFromRight(buttonW).withSizeKeepingCentre(buttonW, h);
+  minusButton_.setBounds(minusBounds);
+  plusButton_.setBounds(plusBounds);
+  valueLabel_.setBounds(row.reduced(2, 0));
 }
 
 } // namespace PlugUI

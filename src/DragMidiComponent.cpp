@@ -38,22 +38,28 @@ void DragMidiComponent::paint(juce::Graphics &g) {
   g.setColour(Theme::borderSubtle.withAlpha(hovered ? 0.76f : 0.60f));
   g.drawRoundedRectangle(bounds, 2.0f, 0.9f);
 
-  auto content = bounds.toNearestInt().reduced(7, 0);
-  auto iconArea = juce::Rectangle<float>(static_cast<float>(content.getX()),
-                                         bounds.getCentreY() - 4.0f, 10.0f, 8.0f);
+  auto content = bounds.toNearestInt().reduced(5, 5);
+  const float iconWidth = juce::jlimit(12.0f, 18.0f, bounds.getWidth() * 0.42f);
+  const float iconHeight = juce::jlimit(10.0f, 14.0f, bounds.getHeight() * 0.34f);
+  auto iconArea = juce::Rectangle<float>(iconWidth, iconHeight)
+                      .withCentre(bounds.getCentre());
   juce::Path midiIcon;
   midiIcon.addRoundedRectangle(iconArea, 1.6f);
   const float pinY = iconArea.getCentreY();
-  midiIcon.startNewSubPath(iconArea.getX() + 2.0f, pinY);
-  midiIcon.lineTo(iconArea.getRight() - 2.0f, pinY);
+  const float sidePadding = juce::jmax(2.0f, iconWidth * 0.17f);
+  midiIcon.startNewSubPath(iconArea.getX() + sidePadding, pinY);
+  midiIcon.lineTo(iconArea.getRight() - sidePadding, pinY);
   for (int i = 0; i < 3; ++i) {
-    const float pinX = iconArea.getX() + 2.0f + static_cast<float>(i) * 3.0f;
-    midiIcon.addEllipse(pinX - 0.55f, iconArea.getY() + 1.4f, 1.1f, 1.1f);
-    midiIcon.addEllipse(pinX - 0.55f, iconArea.getBottom() - 2.5f, 1.1f, 1.1f);
+    const float pinSpacing = (iconWidth - sidePadding * 2.0f) / 2.0f;
+    const float pinX = iconArea.getX() + sidePadding + static_cast<float>(i) * pinSpacing;
+    const float pinSize = juce::jmax(1.2f, iconWidth * 0.10f);
+    midiIcon.addEllipse(pinX - pinSize * 0.5f, iconArea.getY() + 1.6f, pinSize, pinSize);
+    midiIcon.addEllipse(pinX - pinSize * 0.5f, iconArea.getBottom() - (pinSize + 1.6f), pinSize,
+                        pinSize);
   }
 
   g.setColour(available ? Theme::accentDim.withAlpha(0.85f) : Theme::accentDim.withAlpha(0.45f));
-  g.strokePath(midiIcon, juce::PathStrokeType(0.8f));
+  g.strokePath(midiIcon, juce::PathStrokeType(1.1f));
 
   g.setColour(available ? Theme::textMuted.brighter(0.16f)
                         : Theme::textMuted.withAlpha(0.6f));
@@ -61,9 +67,11 @@ void DragMidiComponent::paint(juce::Graphics &g) {
       juce::FontOptions(Theme::fontFamily, Theme::fontSection + 0.35f, juce::Font::plain));
   font.setExtraKerningFactor(0.06f);
   g.setFont(font);
-  auto textArea = content;
-  textArea.removeFromLeft(14);
-  g.drawText(text_, textArea, juce::Justification::centredLeft, false);
+  if (text_.isNotEmpty()) {
+    auto textArea = content;
+    textArea.removeFromLeft(18);
+    g.drawText(text_, textArea, juce::Justification::centredLeft, false);
+  }
 }
 
 void DragMidiComponent::mouseDown(const juce::MouseEvent &e) {
