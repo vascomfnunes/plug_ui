@@ -28,24 +28,42 @@ void DragMidiComponent::setMidiFile(const juce::MidiFile &midiFile) {
 void DragMidiComponent::paint(juce::Graphics &g) {
   auto bounds = getLocalBounds().toFloat().reduced(0.5f);
   const bool available = canDrag();
+  const bool hovered = isMouseOverOrDragging();
 
-  const auto base = available ? Theme::buttonOff.brighter(0.06f)
-                              : Theme::buttonOff.darker(0.08f);
-  juce::ColourGradient grad(base.brighter(0.12f), bounds.getCentreX(), bounds.getY(),
-                            base.darker(0.15f), bounds.getCentreX(), bounds.getBottom(), false);
-  g.setGradientFill(grad);
+  const auto base = available ? Theme::buttonOff.brighter(hovered ? 0.03f : 0.01f)
+                              : Theme::buttonOff.darker(0.10f);
+  g.setColour(base.withAlpha(0.88f));
   g.fillRoundedRectangle(bounds, 2.0f);
 
-  g.setColour(Theme::borderSubtle.withAlpha(0.8f));
+  g.setColour(Theme::borderSubtle.withAlpha(hovered ? 0.76f : 0.60f));
   g.drawRoundedRectangle(bounds, 2.0f, 0.9f);
 
-  g.setColour(available ? Theme::textMuted.brighter(0.25f)
+  auto content = bounds.toNearestInt().reduced(7, 0);
+  auto iconArea = juce::Rectangle<float>(static_cast<float>(content.getX()),
+                                         bounds.getCentreY() - 4.0f, 10.0f, 8.0f);
+  juce::Path midiIcon;
+  midiIcon.addRoundedRectangle(iconArea, 1.6f);
+  const float pinY = iconArea.getCentreY();
+  midiIcon.startNewSubPath(iconArea.getX() + 2.0f, pinY);
+  midiIcon.lineTo(iconArea.getRight() - 2.0f, pinY);
+  for (int i = 0; i < 3; ++i) {
+    const float pinX = iconArea.getX() + 2.0f + static_cast<float>(i) * 3.0f;
+    midiIcon.addEllipse(pinX - 0.55f, iconArea.getY() + 1.4f, 1.1f, 1.1f);
+    midiIcon.addEllipse(pinX - 0.55f, iconArea.getBottom() - 2.5f, 1.1f, 1.1f);
+  }
+
+  g.setColour(available ? Theme::accentDim.withAlpha(0.85f) : Theme::accentDim.withAlpha(0.45f));
+  g.strokePath(midiIcon, juce::PathStrokeType(0.8f));
+
+  g.setColour(available ? Theme::textMuted.brighter(0.16f)
                         : Theme::textMuted.withAlpha(0.6f));
   auto font = juce::Font(
-      juce::FontOptions(Theme::fontFamily, Theme::fontSection + 0.5f, juce::Font::bold));
+      juce::FontOptions(Theme::fontFamily, Theme::fontSection + 0.35f, juce::Font::plain));
   font.setExtraKerningFactor(0.06f);
   g.setFont(font);
-  g.drawText(text_, getLocalBounds(), juce::Justification::centred, false);
+  auto textArea = content;
+  textArea.removeFromLeft(14);
+  g.drawText(text_, textArea, juce::Justification::centredLeft, false);
 }
 
 void DragMidiComponent::mouseDown(const juce::MouseEvent &e) {

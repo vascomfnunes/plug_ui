@@ -439,16 +439,42 @@ void PlugLookAndFeel::drawButtonBackground(juce::Graphics &g,
   auto bounds = button.getLocalBounds().toFloat().reduced(0.5f);
   juce::Colour base =
       backgroundColour.isTransparent() ? buttonOff : backgroundColour;
+  const bool isPrimary = button.getProperties().getWithDefault("plugPrimaryAction", false);
+
+  if (isPrimary) {
+    auto shadowBounds =
+        bounds.translated(0.0f, shouldDrawButtonAsDown ? 0.4f : 1.1f).expanded(1.4f, 1.1f);
+    juce::ColourGradient shadow(juce::Colours::black.withAlpha(0.24f),
+                                shadowBounds.getCentreX(), shadowBounds.getCentreY(),
+                                juce::Colours::transparentBlack, shadowBounds.getRight(),
+                                shadowBounds.getBottom(), true);
+    shadow.addColour(0.65, juce::Colours::black.withAlpha(0.08f));
+    g.setGradientFill(shadow);
+    g.fillRoundedRectangle(shadowBounds, 3.4f);
+  }
+
   if (shouldDrawButtonAsDown)
     base = base.darker(0.08f);
   else if (shouldDrawButtonAsHighlighted)
     base = base.brighter(0.08f);
 
-  juce::ColourGradient fill(base.brighter(0.10f), bounds.getCentreX(),
-                            bounds.getY(), base.darker(0.18f),
-                            bounds.getCentreX(), bounds.getBottom(), false);
+  const float topBoost = isPrimary ? 0.20f : 0.10f;
+  const float bottomDark = isPrimary ? 0.26f : 0.18f;
+  juce::ColourGradient fill(base.brighter(topBoost), bounds.getCentreX(), bounds.getY(),
+                            base.darker(bottomDark), bounds.getCentreX(), bounds.getBottom(),
+                            false);
   g.setGradientFill(fill);
   g.fillRoundedRectangle(bounds, 2.0f);
+
+  if (isPrimary && shouldDrawButtonAsHighlighted) {
+    auto glowBounds = bounds.expanded(4.5f, 2.8f);
+    juce::ColourGradient glow(accentBright.withAlpha(0.20f), glowBounds.getCentreX(),
+                              glowBounds.getCentreY(), juce::Colours::transparentBlack,
+                              glowBounds.getRight(), glowBounds.getBottom(), true);
+    glow.addColour(0.72, juce::Colours::transparentBlack);
+    g.setGradientFill(glow);
+    g.fillRoundedRectangle(glowBounds, 4.0f);
+  }
 
   g.setColour(juce::Colours::white.withAlpha(0.12f));
   g.drawLine(bounds.getX() + 1.0f, bounds.getY() + 1.0f,
@@ -465,18 +491,13 @@ void PlugLookAndFeel::drawButtonText(juce::Graphics &g,
   const auto b = button.getLocalBounds().toFloat();
   auto f = juce::Font(juce::FontOptions(
       fontFamily, juce::jmax(8.0f, b.getHeight() * 0.42f), juce::Font::plain));
-  const auto buttonText = button.getButtonText();
-  if (buttonText == "🎲" || buttonText == "⚄")
-    f = juce::Font(juce::FontOptions("Apple Color Emoji",
-                                     juce::jmax(10.0f, b.getHeight() * 0.62f),
-                                     juce::Font::plain));
   f.setExtraKerningFactor(0.04f);
   g.setFont(f);
   g.setColour(
       button.findColour(juce::TextButton::textColourOffId).isTransparent()
           ? textPrimary
           : button.findColour(juce::TextButton::textColourOffId));
-  g.drawFittedText(buttonText, button.getLocalBounds(),
+  g.drawFittedText(button.getButtonText(), button.getLocalBounds(),
                    juce::Justification::centred, 1);
 }
 
@@ -503,15 +524,18 @@ void PlugLookAndFeel::drawLabel(juce::Graphics &g, juce::Label &label) {
 void PlugLookAndFeel::drawComboBox(juce::Graphics &g, int width, int height,
                                    bool, int buttonX, int buttonY, int buttonW,
                                    int buttonH, juce::ComboBox &box) {
+  const bool emphasizeCharacter = box.getProperties().getWithDefault("plugCharacterEmphasis", false);
   const auto bounds =
       juce::Rectangle<float>(0.5f, 0.5f, static_cast<float>(width) - 1.0f,
                              static_cast<float>(height) - 1.0f);
-  juce::ColourGradient fill(panelBg.brighter(0.08f), bounds.getCentreX(),
-                            bounds.getY(), panelBg.darker(0.12f),
-                            bounds.getCentreX(), bounds.getBottom(), false);
+  const float topTone = emphasizeCharacter ? 0.11f : 0.08f;
+  const float bottomTone = emphasizeCharacter ? 0.16f : 0.12f;
+  juce::ColourGradient fill(panelBg.brighter(topTone), bounds.getCentreX(), bounds.getY(),
+                            panelBg.darker(bottomTone), bounds.getCentreX(),
+                            bounds.getBottom(), false);
   g.setGradientFill(fill);
   g.fillRoundedRectangle(bounds, 2.0f);
-  g.setColour(borderSubtle.withAlpha(0.55f));
+  g.setColour(borderSubtle.withAlpha(emphasizeCharacter ? 0.72f : 0.55f));
   g.drawRoundedRectangle(bounds, 2.0f, 0.8f);
 
   const float cx = static_cast<float>(buttonX + buttonW / 2);
@@ -523,11 +547,21 @@ void PlugLookAndFeel::drawComboBox(juce::Graphics &g, int width, int height,
   arrow.closeSubPath();
   g.setColour(textMuted.withAlpha(box.isEnabled() ? 0.95f : 0.45f));
   g.fillPath(arrow);
+
+  if (emphasizeCharacter) {
+    const bool active = box.hasKeyboardFocus(true) || box.isMouseOverOrDragging() ||
+                        box.getSelectedId() > 0;
+    g.setColour(accentBright.withAlpha(active ? 0.55f : 0.24f));
+    g.drawLine(bounds.getX() + 6.0f, bounds.getBottom() - 1.0f,
+               bounds.getRight() - 6.0f, bounds.getBottom() - 1.0f, 1.4f);
+  }
 }
 
-juce::Font PlugLookAndFeel::getComboBoxFont(juce::ComboBox &) {
-  auto f = juce::Font(juce::FontOptions(fontFamily, 11.0f, juce::Font::plain));
-  f.setExtraKerningFactor(0.02f);
+juce::Font PlugLookAndFeel::getComboBoxFont(juce::ComboBox &box) {
+  const bool emphasizeCharacter = box.getProperties().getWithDefault("plugCharacterEmphasis", false);
+  auto f = juce::Font(juce::FontOptions(fontFamily, emphasizeCharacter ? 11.9f : 11.0f,
+                                        juce::Font::plain));
+  f.setExtraKerningFactor(emphasizeCharacter ? 0.03f : 0.02f);
   return f;
 }
 

@@ -14,6 +14,7 @@ add_library(PlugUI STATIC
     src/PlugIntegerSelector.cpp
     src/PlugToggle.cpp
     src/PlugActionButton.cpp
+    src/PlugDiceButton.cpp
     src/DragMidiComponent.cpp
     src/PlugSectionLabel.cpp
     src/PlugMeter.cpp
