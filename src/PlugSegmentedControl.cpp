@@ -3,13 +3,11 @@
 
 namespace PlugUI {
 
-PlugSegmentedControl::PlugSegmentedControl(
-    const std::vector<std::string> &labels) {
+PlugSegmentedControl::PlugSegmentedControl(const std::vector<std::string> &labels) {
   const int numSegments = static_cast<int>(labels.size());
   for (int i = 0; i < numSegments; ++i) {
     auto btn = std::make_unique<juce::ToggleButton>();
-    btn->setButtonText(
-        juce::String(labels[static_cast<size_t>(i)]).toUpperCase());
+    btn->setButtonText(juce::String(labels[static_cast<size_t>(i)]).toUpperCase());
     btn->setClickingTogglesState(false);
     btn->setColour(juce::ToggleButton::textColourId, Theme::textMuted);
     btn->getProperties().set("plugSegment", true);
@@ -27,12 +25,11 @@ PlugSegmentedControl::PlugSegmentedControl(
 
 void PlugSegmentedControl::setSelectedId(int selectedId,
                                          juce::NotificationType notification) {
-  const int safeId =
-      juce::jlimit(1, static_cast<int>(m_buttons.size()), selectedId);
+  const int safeId = juce::jlimit(1, static_cast<int>(m_buttons.size()), selectedId);
   m_selectedId = safeId;
   for (int i = 0; i < static_cast<int>(m_buttons.size()); ++i)
-    m_buttons[static_cast<size_t>(i)]->setToggleState(
-        i + 1 == safeId, juce::dontSendNotification);
+    m_buttons[static_cast<size_t>(i)]->setToggleState(i + 1 == safeId,
+                                                      juce::dontSendNotification);
   if (notification != juce::dontSendNotification && onSelectionChanged)
     onSelectionChanged(safeId);
 }
@@ -52,7 +49,12 @@ void PlugSegmentedControl::resized() {
   const int n = static_cast<int>(m_buttons.size());
   if (n == 0)
     return;
-  const int gap = juce::roundToInt(static_cast<float>(b.getHeight()) * 0.15f);
+  // Dense selectors (7-8 segments) need tighter gaps to avoid tiny hit targets.
+  int gap = juce::roundToInt(static_cast<float>(b.getHeight()) * 0.15f);
+  if (n >= 7)
+    gap = juce::jmax(1, juce::roundToInt(static_cast<float>(b.getHeight()) * 0.06f));
+  else if (n >= 5)
+    gap = juce::jmax(1, juce::roundToInt(static_cast<float>(b.getHeight()) * 0.10f));
   const int totalGaps = (n - 1) * gap;
   const int segmentW = (b.getWidth() - totalGaps) / n;
   int x = b.getX();
