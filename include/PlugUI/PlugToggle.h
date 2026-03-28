@@ -5,11 +5,11 @@
 namespace PlugUI {
 
 class PlugToggle : public juce::ToggleButton {
-public:
-  explicit PlugToggle(const juce::String &text = {});
+  public:
+    explicit PlugToggle(const juce::String& text = {});
 
-private:
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlugToggle)
+  private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlugToggle)
 };
 
 } // namespace PlugUI

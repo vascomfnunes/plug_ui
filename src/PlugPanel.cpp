@@ -3,10 +3,12 @@
 
 namespace PlugUI {
 
-PlugPanel::PlugPanel() { setInterceptsMouseClicks(false, true); }
+PlugPanel::PlugPanel() {
+    setInterceptsMouseClicks(false, true);
+}
 
-void PlugPanel::paint(juce::Graphics &g) {
-  BackgroundRenderer::paintEnginePanel(g, getLocalBounds());
+void PlugPanel::paint(juce::Graphics& g) {
+    BackgroundRenderer::paintEnginePanel(g, getLocalBounds());
 }
 
 } // namespace PlugUI

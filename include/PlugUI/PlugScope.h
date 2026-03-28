@@ -10,39 +10,39 @@ namespace PlugUI {
    flashes.
 */
 class PlugScope : public juce::Component {
-public:
-  PlugScope();
+  public:
+    PlugScope();
 
-  void paint(juce::Graphics &g) override;
+    void paint(juce::Graphics& g) override;
 
-  /** Push a single pre-computed min/max column block. */
-  void pushColumn(float preMin, float preMax, float postMin, float postMax);
+    /** Push a single pre-computed min/max column block. */
+    void pushColumn(float preMin, float preMax, float postMin, float postMax);
 
-  /** Set the db guides to draw. */
-  void setLevels(float thresholdDb, float ceilingDb);
+    /** Set the db guides to draw. */
+    void setLevels(float thresholdDb, float ceilingDb);
 
-  /** Adds clip flash brightness that gently decays. */
-  void triggerClipFlash();
+    /** Adds clip flash brightness that gently decays. */
+    void triggerClipFlash();
 
-private:
-  static constexpr int kHistoryColumns = 384;
+  private:
+    static constexpr int kHistoryColumns = 384;
 
-  struct HistoryColumn {
-    float preMin = 0.0f;
-    float preMax = 0.0f;
-    float postMin = 0.0f;
-    float postMax = 0.0f;
-    bool hasData = false;
-  };
+    struct HistoryColumn {
+        float preMin  = 0.0f;
+        float preMax  = 0.0f;
+        float postMin = 0.0f;
+        float postMax = 0.0f;
+        bool hasData  = false;
+    };
 
-  std::array<HistoryColumn, kHistoryColumns> history{};
-  int historyWritePos = 0;
+    std::array<HistoryColumn, kHistoryColumns> history{};
+    int historyWritePos = 0;
 
-  float clipFlashAlpha = 0.0f;
-  float m_threshDb = 0.0f;
-  float m_ceilDb = 0.0f;
+    float clipFlashAlpha = 0.0f;
+    float m_threshDb     = 0.0f;
+    float m_ceilDb       = 0.0f;
 
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlugScope)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlugScope)
 };
 
 } // namespace PlugUI

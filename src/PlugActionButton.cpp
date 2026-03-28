@@ -2,8 +2,8 @@
 
 namespace PlugUI {
 
-PlugActionButton::PlugActionButton(const juce::String &text) {
-  setButtonText(text.toUpperCase());
+PlugActionButton::PlugActionButton(const juce::String& text) {
+    setButtonText(text.toUpperCase());
 }
 
 } // namespace PlugUI

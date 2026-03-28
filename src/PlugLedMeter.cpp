@@ -19,9 +19,8 @@ void PlugLedMeter::paint(juce::Graphics& g) {
     // Matches PlugGrMeter dark glass face
     const auto bgBase = juce::Colour(0xFF080A0E);
     const auto bgHi   = bgBase.brighter(0.20f);
-    juce::ColourGradient bgGrad(
-        bgHi,  juce::Point<float>(bounds.getCentreX(), bounds.getY()),
-        bgBase, juce::Point<float>(bounds.getCentreX(), bounds.getBottom()), false);
+    juce::ColourGradient bgGrad(bgHi, juce::Point<float>(bounds.getCentreX(), bounds.getY()), bgBase,
+                                juce::Point<float>(bounds.getCentreX(), bounds.getBottom()), false);
     g.setGradientFill(bgGrad);
     g.fillRoundedRectangle(bounds, 2.0f);
 
@@ -44,16 +43,16 @@ void PlugLedMeter::paint(juce::Graphics& g) {
         juce::Colour(0xFFBB2820), // 9  – red        ( -3 to   0)
     };
 
-    constexpr float gap    = 1.5f;
-    const float     segH   = (bounds.getHeight() - gap * (N_SEGS - 1)) / static_cast<float>(N_SEGS);
-    const float     segW   = bounds.getWidth() - 2.0f;
-    const float     segX   = bounds.getX() + 1.0f;
+    constexpr float gap = 1.5f;
+    const float segH    = (bounds.getHeight() - gap * (N_SEGS - 1)) / static_cast<float>(N_SEGS);
+    const float segW    = bounds.getWidth() - 2.0f;
+    const float segX    = bounds.getX() + 1.0f;
 
     for (int i = 0; i < N_SEGS; ++i) {
         // i = 0 is bottom, N_SEGS-1 is top
         // Threshold for segment i: the level that lights this segment
-        const float threshold = MIN_DB + static_cast<float>(i) *
-                                (MAX_DB - MIN_DB) / static_cast<float>(N_SEGS);
+        const float threshold =
+            MIN_DB + static_cast<float>(i) * (MAX_DB - MIN_DB) / static_cast<float>(N_SEGS);
         const bool isLit = m_levelDb >= threshold;
 
         // Y position: segment 0 at bottom, N_SEGS-1 at top

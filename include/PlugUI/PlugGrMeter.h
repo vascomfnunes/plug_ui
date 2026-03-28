@@ -6,32 +6,32 @@ namespace PlugUI {
 
 /** Analog-style compressor gain-reduction meter.
  *
- *  Displays 0–15 dB of gain reduction using a needle on a cream-paper
+ *  Displays 0–6 dB of gain reduction using a needle on a cream-paper
  *  face, matching the visual language of the PlugVuMeter.
  *
  *  Scale orientation (mirrors real hardware compressor meters, e.g. SSL Bus):
  *    - Needle rests at the RIGHT  (0 dB GR = no compression)
  *    - Needle deflects LEFT as GR increases (more compression)
- *  Ticks: major at 0, 2, 4, 6, 8, 10, 15 dB — minor at every other integer.
+ *  Ticks: major at 0, 1, 2, 3, 4, 5, 6 dB — minor at every 0.5 dB.
  */
 class PlugGrMeter : public juce::Component {
-public:
-  PlugGrMeter() = default;
+  public:
+    PlugGrMeter() = default;
 
-  /** Sets the current gain reduction in dB (positive = more reduction). */
-  void setGainReductionDb(float grDb) noexcept;
+    /** Sets the current gain reduction in dB (positive = more reduction). */
+    void setGainReductionDb(float grDb) noexcept;
 
-  void paint(juce::Graphics &g) override;
+    void paint(juce::Graphics& g) override;
 
-private:
-  float m_grDb{0.0f};
+  private:
+    float m_grDb{0.0f};
 
-  static constexpr float maxGr      = 15.0f;
-  // Arc shared with PlugVuMeter for visual consistency
-  static constexpr float startAngle = juce::MathConstants<float>::pi * 1.10f;
-  static constexpr float endAngle   = juce::MathConstants<float>::pi * 1.90f;
+    static constexpr float maxGr = 6.0f;
+    // Arc shared with PlugVuMeter for visual consistency
+    static constexpr float startAngle = juce::MathConstants<float>::pi * 1.10f;
+    static constexpr float endAngle   = juce::MathConstants<float>::pi * 1.90f;
 
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlugGrMeter)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlugGrMeter)
 };
 
 } // namespace PlugUI

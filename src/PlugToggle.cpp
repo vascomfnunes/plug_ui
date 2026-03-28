@@ -2,9 +2,9 @@
 
 namespace PlugUI {
 
-PlugToggle::PlugToggle(const juce::String &text) {
-  setButtonText(text.toUpperCase());
-  setClickingTogglesState(true);
+PlugToggle::PlugToggle(const juce::String& text) {
+    setButtonText(text.toUpperCase());
+    setClickingTogglesState(true);
 }
 
 } // namespace PlugUI

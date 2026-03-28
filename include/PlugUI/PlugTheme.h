@@ -33,7 +33,7 @@ inline const juce::Colour knobRimDark{0xFF161418};
 // Meter
 inline const juce::Colour meterBg{0xFF0E1115};
 inline const juce::Colour meterFill = accentBright;
-inline const juce::Colour divider = borderSubtle;
+inline const juce::Colour divider   = borderSubtle;
 
 // Buttons
 inline const juce::Colour buttonOn = accent;
@@ -42,27 +42,27 @@ inline const juce::Colour buttonOnText{0xFF111419};
 inline const juce::Colour buttonOffText{0xFFB0B8C2};
 
 // ─── Spacing (reduced ~8–10% for denser layout) ──────────────────────────────
-inline constexpr float paddingSmall = 2.0f;
+inline constexpr float paddingSmall  = 2.0f;
 inline constexpr float paddingMedium = 5.0f;
-inline constexpr float paddingLarge = 8.0f;
+inline constexpr float paddingLarge  = 8.0f;
 
 // ─── Knob sizes (base, before UI scale)
 // ───────────────────────────────────────
-inline constexpr float knobLarge = 110.0f;
+inline constexpr float knobLarge  = 110.0f;
 inline constexpr float knobMedium = 88.0f;
-inline constexpr float knobSmall = 74.0f;
+inline constexpr float knobSmall  = 74.0f;
 
 // ─── Knob rim proportions ────────────────────────────────────────────────────
 inline constexpr float knobRimFraction = 0.23f; // wide shelf/bezel
-inline constexpr float knobRimMin = 4.0f;       // minimum rim width in px
+inline constexpr float knobRimMin      = 4.0f;  // minimum rim width in px
 
 // ─── Value arc ───────────────────────────────────────────────────────────────
 inline constexpr float arcThickness = 2.4f; // gold value arc
 
 // ─── Typography sizes (base, before UI scale) ────────────────────────────────
 inline constexpr float fontSection = 10.2f;
-inline constexpr float fontLabel = 12.5f;
-inline constexpr float fontValue = 7.5f;
+inline constexpr float fontLabel   = 12.5f;
+inline constexpr float fontValue   = 7.5f;
 inline constexpr float fontSegment = 8.0f;
 
 // ─── Font name

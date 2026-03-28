@@ -9,7 +9,7 @@ namespace PlugUI {
     Scale: -30 dBFS (bottom) to 0 dBFS (top).
     Intended for flanking the PlugGrMeter to show L/R output levels. */
 class PlugLedMeter : public juce::Component {
-public:
+  public:
     PlugLedMeter() = default;
 
     /** Set the current level in dBFS (negative = below full scale). */
@@ -17,12 +17,12 @@ public:
 
     void paint(juce::Graphics& g) override;
 
-private:
+  private:
     float m_levelDb{-80.0f};
 
-    static constexpr int   N_SEGS = 10;
+    static constexpr int N_SEGS   = 10;
     static constexpr float MIN_DB = -30.0f;
-    static constexpr float MAX_DB =   0.0f;
+    static constexpr float MAX_DB = 0.0f;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlugLedMeter)
 };

@@ -5,26 +5,26 @@
 namespace PlugUI {
 
 class PlugDiceButton : public juce::Button, private juce::Timer {
-public:
-  PlugDiceButton();
+  public:
+    PlugDiceButton();
 
-  void paintButton(juce::Graphics &, bool hovered, bool pressed) override;
-  void mouseEnter(const juce::MouseEvent &) override;
-  void mouseExit(const juce::MouseEvent &) override;
-  void clicked() override;
+    void paintButton(juce::Graphics&, bool hovered, bool pressed) override;
+    void mouseEnter(const juce::MouseEvent&) override;
+    void mouseExit(const juce::MouseEvent&) override;
+    void clicked() override;
 
-  void setFaceValue(int value);
-  int getFaceValue() const noexcept { return faceValue_; }
+    void setFaceValue(int value);
+    int getFaceValue() const noexcept { return faceValue_; }
 
-private:
-  void timerCallback() override;
+  private:
+    void timerCallback() override;
 
-  int faceValue_ = 5;
-  float hoverAmount_ = 0.0f;
-  float clickAmount_ = 0.0f;
-  bool hoverTarget_ = false;
+    int faceValue_     = 5;
+    float hoverAmount_ = 0.0f;
+    float clickAmount_ = 0.0f;
+    bool hoverTarget_  = false;
 
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlugDiceButton)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlugDiceButton)
 };
 
 } // namespace PlugUI
