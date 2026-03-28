@@ -27,6 +27,8 @@ add_library(PlugUI STATIC
     src/PlugScope.cpp
     src/PlugVuMeter.cpp
     src/PlugCorrelationMeter.cpp
+    src/PlugGrMeter.cpp
+    src/PlugLedMeter.cpp
 )
 
 if(COMMAND juce_add_binary_data)
