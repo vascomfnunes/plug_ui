@@ -43,7 +43,7 @@ void PlugHeader::paint(juce::Graphics& g) {
 
     // ── Subtitle (centered in right col, muted) ──────────────────────────
     auto subtitleFont =
-        juce::Font(juce::FontOptions(fontFamily, 20.0f * m_uiScale, juce::Font::plain));
+        juce::Font(juce::FontOptions(fontFamily, 23.0f * m_uiScale, juce::Font::plain));
     subtitleFont.setExtraKerningFactor(0.06f);
     g.setFont(subtitleFont);
     g.setColour(textMuted.withAlpha(0.95f));
