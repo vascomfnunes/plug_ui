@@ -181,3 +181,15 @@ static PlugSegmentedControlTests segmentedTests;
 static PlugScopeTests scopeTests;
 
 } // namespace PlugUI::Tests
+
+int main()
+{
+    juce::UnitTestRunner runner;
+    runner.runAllTests();
+
+    int numFailures = 0;
+    for (int i = 0; i < runner.getNumResults(); ++i)
+        numFailures += runner.getResult(i)->failures;
+
+    return (numFailures > 0) ? 1 : 0;
+}
