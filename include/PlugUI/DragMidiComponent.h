@@ -6,7 +6,9 @@
 
 namespace PlugUI {
 
-class DragMidiComponent : public juce::Component, public juce::DragAndDropContainer {
+class DragMidiComponent : public juce::Component,
+                          public juce::DragAndDropContainer,
+                          public juce::SettableTooltipClient {
   public:
     using MidiProvider = std::function<juce::MidiFile()>;
 
